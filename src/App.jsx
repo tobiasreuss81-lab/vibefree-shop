@@ -97,6 +97,11 @@ export default function App() {
         </ul>
       </div>
 
+      {/* FOOTER (JETZT MIT KONTAKT) */}
+      <div style={styles.footer}>
+        Kontakt: vibe-free@gmx.de
+      </div>
+
     </div>
   );
 }
@@ -187,5 +192,12 @@ const styles = {
     maxWidth: 500,
     marginLeft: "auto",
     marginRight: "auto"
+  },
+
+  footer: {
+    marginTop: 40,
+    textAlign: "center",
+    opacity: 0.6,
+    fontSize: 13
   }
 };
