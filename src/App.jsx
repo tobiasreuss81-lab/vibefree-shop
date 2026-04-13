@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import { db } from "./firebase";
-import { collection, getDocs, addDoc } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+  collection,
+  getDocs,
+  addDoc
+} from "firebase/firestore";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "firebase/auth";
+
 import { useNavigate } from "react-router-dom";
 
 export default function App() {
@@ -11,6 +22,11 @@ export default function App() {
   const auth = getAuth();
   const navigate = useNavigate();
 
+  // LOGIN FORM
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // ADMIN PRODUCT
   const [newProduct, setNewProduct] = useState({
     name: "",
     price: "",
@@ -27,6 +43,21 @@ export default function App() {
     return () => unsub();
   }, []);
 
+  // LOGIN
+  const login = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      alert("Login fehlgeschlagen");
+    }
+  };
+
+  // LOGOUT
+  const logout = () => {
+    signOut(auth);
+  };
+
+  // PRODUCTS LOAD
   const loadProducts = async () => {
     const snap = await getDocs(collection(db, "products"));
 
@@ -42,6 +73,7 @@ export default function App() {
     loadProducts();
   }, []);
 
+  // ADD PRODUCT (nur wenn eingeloggt)
   const addProduct = async () => {
     if (!user) return;
 
@@ -62,67 +94,91 @@ export default function App() {
     loadProducts();
   };
 
+  /* ================= UI ================= */
+
+  // ❌ NICHT LOGGED IN → LOGIN SCREEN
+  if (!user) {
+    return (
+      <div style={styles.page}>
+        <h2>Admin Login</h2>
+
+        <input
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          placeholder="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button onClick={login} style={styles.button}>
+          Login
+        </button>
+      </div>
+    );
+  }
+
+  // ✅ LOGGED IN → ADMIN PANEL
   return (
     <div style={styles.page}>
 
-      {/* HEADER */}
       <div style={styles.header}>
-        <h1>VibeFree Shop</h1>
+        <h1>Admin Dashboard</h1>
+
+        <button onClick={logout} style={{ marginLeft: "auto" }}>
+          Logout
+        </button>
       </div>
 
-      {/* 🔐 ADMIN PANEL (NUR LOGGED IN) */}
-      {user && (
-        <div style={styles.adminBox}>
-          <h3>Admin – Neues Produkt</h3>
+      {/* ADD PRODUCT */}
+      <div style={styles.adminBox}>
+        <h3>Neues Produkt</h3>
 
-          <input
-            placeholder="Name"
-            value={newProduct.name}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, name: e.target.value })
-            }
-          />
+        <input
+          placeholder="Name"
+          value={newProduct.name}
+          onChange={(e) =>
+            setNewProduct({ ...newProduct, name: e.target.value })
+          }
+        />
 
-          <input
-            placeholder="Preis"
-            value={newProduct.price}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, price: e.target.value })
-            }
-          />
+        <input
+          placeholder="Preis"
+          value={newProduct.price}
+          onChange={(e) =>
+            setNewProduct({ ...newProduct, price: e.target.value })
+          }
+        />
 
-          <input
-            placeholder="Bild URL"
-            value={newProduct.image}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, image: e.target.value })
-            }
-          />
+        <input
+          placeholder="Bild URL"
+          value={newProduct.image}
+          onChange={(e) =>
+            setNewProduct({ ...newProduct, image: e.target.value })
+          }
+        />
 
-          <textarea
-            placeholder="Beschreibung"
-            value={newProduct.description}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, description: e.target.value })
-            }
-          />
+        <textarea
+          placeholder="Beschreibung"
+          value={newProduct.description}
+          onChange={(e) =>
+            setNewProduct({ ...newProduct, description: e.target.value })
+          }
+        />
 
-          <button onClick={addProduct} style={styles.button}>
-            Produkt speichern
-          </button>
-        </div>
-      )}
+        <button onClick={addProduct} style={styles.button}>
+          Produkt speichern
+        </button>
+      </div>
 
-      {/* PRODUKTE */}
+      {/* PRODUCTS */}
       <div style={styles.grid}>
         {products.map(p => (
           <div key={p.id} style={styles.card}>
-            {p.images?.length > 0 ? (
-              <img src={p.images[0]} style={styles.img} />
-            ) : (
-              <div style={styles.placeholder}>Kein Bild</div>
-            )}
-
             <h3>{p.name}</h3>
             <p>{p.price}</p>
           </div>
@@ -144,6 +200,8 @@ const styles = {
   },
 
   header: {
+    display: "flex",
+    alignItems: "center",
     marginBottom: 20
   },
 
@@ -177,20 +235,5 @@ const styles = {
     background: "rgba(255,255,255,0.05)",
     padding: 10,
     borderRadius: 10
-  },
-
-  img: {
-    width: "100%",
-    height: 150,
-    objectFit: "cover",
-    borderRadius: 8
-  },
-
-  placeholder: {
-    height: 150,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "#1e293b"
   }
 };
