@@ -97,11 +97,6 @@ export default function App() {
         </ul>
       </div>
 
-      {/* FOOTER */}
-      <div style={styles.footer}>
-        Kostenloser Versand innerhalb Deutschland & Schweiz • Lieferzeit ca. 3 Werktage
-      </div>
-
     </div>
   );
 }
@@ -192,12 +187,5 @@ const styles = {
     maxWidth: 500,
     marginLeft: "auto",
     marginRight: "auto"
-  },
-
-  footer: {
-    marginTop: 40,
-    textAlign: "center",
-    opacity: 0.5,
-    fontSize: 13
   }
 };
