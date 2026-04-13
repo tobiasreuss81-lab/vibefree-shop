@@ -16,7 +16,6 @@ export default function App() {
         ...doc.data()
       }));
 
-      // 👉 falls keine Produkte vorhanden → 4 Standardprodukte erstellen
       if (items.length === 0) {
         const defaults = [
           { name: "Produkt 1", price: "", description: "", images: [] },
@@ -55,7 +54,7 @@ export default function App() {
             VibeFree – Diskreter Online Shop für Lifestyle Produkte
           </h1>
           <p style={styles.sub}>
-            Premium Produkte • Diskreter Versand Deutschland & Schweiz • Schnell & sicher bestellen
+            Premium • Diskreter Versand Deutschland & Schweiz • Schnell & sicher
           </p>
         </div>
       </div>
@@ -63,9 +62,9 @@ export default function App() {
       {/* SEO TEXT BLOCK */}
       <div style={styles.seoText}>
         <p>
-          VibeFree ist ein diskreter Online Shop für Lifestyle Produkte mit sicherem Versand
-          innerhalb von Deutschland und der Schweiz. Alle Bestellungen werden anonym und diskret
-          verpackt und schnell geliefert.
+          VibeFree ist ein diskreter Online Shop für hochwertige Lifestyle Produkte mit
+          sicherem Versand innerhalb von Deutschland und der Schweiz. Alle Bestellungen
+          werden anonym und diskret verpackt und schnell geliefert.
         </p>
       </div>
 
@@ -92,11 +91,11 @@ export default function App() {
       {/* VERTRAUEN */}
       <div style={styles.trust}>
         <p>
-          ✔ Kostenloser Versand innerhalb Deutschland & Schweiz (3 Tage)<br/>
+          ✔ Kostenloser Versand innerhalb Deutschlands 🇩🇪 (3 Werktage)<br/>
+          ✔ Versand in die Schweiz 🇨🇭 gegen geringe Pauschale<br/>
           ✔ Diskrete & anonyme Verpackung<br/>
           ✔ Premium Lifestyle Produkte online bestellen<br/>
-          ✔ Schnelle Lieferung & sicherer Kontakt über WhatsApp<br/>
-          ✔ 100% zuverlässige Abwicklung
+          ✔ Schnelle & sichere Abwicklung über WhatsApp
         </p>
       </div>
 
