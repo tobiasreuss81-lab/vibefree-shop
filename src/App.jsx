@@ -1,22 +1,32 @@
 import { useEffect, useState } from "react";
 import { db } from "./firebase";
 import { collection, getDocs, addDoc } from "firebase/firestore";
-
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function App() {
   const [products, setProducts] = useState([]);
+  const [user, setUser] = useState(null);
 
-  const storage = getStorage();
+  const auth = getAuth();
+  const navigate = useNavigate();
 
   const [newProduct, setNewProduct] = useState({
     name: "",
     price: "",
     description: "",
-    imageFile: null
+    image: ""
   });
 
-  // 📦 PRODUKTE LADEN
+  // 🔐 CHECK LOGIN STATUS
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+    });
+
+    return () => unsub();
+  }, []);
+
   const loadProducts = async () => {
     const snap = await getDocs(collection(db, "products"));
 
@@ -32,30 +42,21 @@ export default function App() {
     loadProducts();
   }, []);
 
-  // 🚀 PRODUKT ERSTELLEN + BILD UPLOAD
   const addProduct = async () => {
-    let imageUrl = "";
-
-    if (newProduct.imageFile) {
-      const imageRef = ref(storage, `products/${Date.now()}`);
-
-      await uploadBytes(imageRef, newProduct.imageFile);
-
-      imageUrl = await getDownloadURL(imageRef);
-    }
+    if (!user) return;
 
     await addDoc(collection(db, "products"), {
       name: newProduct.name,
       price: newProduct.price,
       description: newProduct.description,
-      images: imageUrl ? [imageUrl] : []
+      images: newProduct.image ? [newProduct.image] : []
     });
 
     setNewProduct({
       name: "",
       price: "",
       description: "",
-      imageFile: null
+      image: ""
     });
 
     loadProducts();
@@ -64,52 +65,55 @@ export default function App() {
   return (
     <div style={styles.page}>
 
+      {/* HEADER */}
       <div style={styles.header}>
         <h1>VibeFree Shop</h1>
       </div>
 
-      {/* ➕ PRODUKT HINZUFÜGEN */}
-      <div style={styles.adminBox}>
-        <h3>Neues Produkt erstellen</h3>
+      {/* 🔐 ADMIN PANEL (NUR LOGGED IN) */}
+      {user && (
+        <div style={styles.adminBox}>
+          <h3>Admin – Neues Produkt</h3>
 
-        <input
-          placeholder="Name"
-          value={newProduct.name}
-          onChange={(e) =>
-            setNewProduct({ ...newProduct, name: e.target.value })
-          }
-        />
+          <input
+            placeholder="Name"
+            value={newProduct.name}
+            onChange={(e) =>
+              setNewProduct({ ...newProduct, name: e.target.value })
+            }
+          />
 
-        <input
-          placeholder="Preis"
-          value={newProduct.price}
-          onChange={(e) =>
-            setNewProduct({ ...newProduct, price: e.target.value })
-          }
-        />
+          <input
+            placeholder="Preis"
+            value={newProduct.price}
+            onChange={(e) =>
+              setNewProduct({ ...newProduct, price: e.target.value })
+            }
+          />
 
-        <textarea
-          placeholder="Beschreibung"
-          value={newProduct.description}
-          onChange={(e) =>
-            setNewProduct({ ...newProduct, description: e.target.value })
-          }
-        />
+          <input
+            placeholder="Bild URL"
+            value={newProduct.image}
+            onChange={(e) =>
+              setNewProduct({ ...newProduct, image: e.target.value })
+            }
+          />
 
-        {/* 📸 IMAGE UPLOAD */}
-        <input
-          type="file"
-          onChange={(e) =>
-            setNewProduct({ ...newProduct, imageFile: e.target.files[0] })
-          }
-        />
+          <textarea
+            placeholder="Beschreibung"
+            value={newProduct.description}
+            onChange={(e) =>
+              setNewProduct({ ...newProduct, description: e.target.value })
+            }
+          />
 
-        <button onClick={addProduct} style={styles.button}>
-          Produkt speichern
-        </button>
-      </div>
+          <button onClick={addProduct} style={styles.button}>
+            Produkt speichern
+          </button>
+        </div>
+      )}
 
-      {/* 📦 PRODUKTE */}
+      {/* PRODUKTE */}
       <div style={styles.grid}>
         {products.map(p => (
           <div key={p.id} style={styles.card}>
@@ -189,5 +193,4 @@ const styles = {
     justifyContent: "center",
     background: "#1e293b"
   }
-};}
 };
