@@ -22,6 +22,7 @@ export default function App() {
           { name: "Produkt 2", price: "", description: "", images: [] },
           { name: "Produkt 3", price: "", description: "", images: [] },
           { name: "Produkt 4", price: "", description: "", images: [] },
+          { name: "Produkt 5", price: "", description: "", images: [] },
         ];
 
         for (let p of defaults) {
@@ -31,7 +32,8 @@ export default function App() {
         return loadProducts();
       }
 
-      setProducts(items.slice(0, 4));
+      // 👉 HIER IST DIE ÄNDERUNG
+      setProducts(items.slice(0, 5));
 
     } catch (err) {
       console.error("Fehler beim Laden:", err);
