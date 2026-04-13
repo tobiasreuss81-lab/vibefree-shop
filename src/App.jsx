@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { db } from "./firebase";
 import { collection, getDocs, addDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function App() {
   const [products, setProducts] = useState([]);
-  const navigate = useNavigate();
 
-  // 👉 NEW: Admin Form State
+  const storage = getStorage();
+
   const [newProduct, setNewProduct] = useState({
     name: "",
     price: "",
     description: "",
-    image: ""
+    imageFile: null
   });
 
+  // 📦 PRODUKTE LADEN
   const loadProducts = async () => {
     const snap = await getDocs(collection(db, "products"));
 
@@ -23,54 +25,52 @@ export default function App() {
       ...doc.data()
     }));
 
-    setProducts(items.slice(0, 10)); // jetzt flexibel
+    setProducts(items.slice(0, 10));
   };
 
   useEffect(() => {
     loadProducts();
   }, []);
 
-  // 👉 NEW: Produkt speichern
+  // 🚀 PRODUKT ERSTELLEN + BILD UPLOAD
   const addProduct = async () => {
-    if (!newProduct.name) return;
+    let imageUrl = "";
+
+    if (newProduct.imageFile) {
+      const imageRef = ref(storage, `products/${Date.now()}`);
+
+      await uploadBytes(imageRef, newProduct.imageFile);
+
+      imageUrl = await getDownloadURL(imageRef);
+    }
 
     await addDoc(collection(db, "products"), {
       name: newProduct.name,
       price: newProduct.price,
       description: newProduct.description,
-      images: newProduct.image ? [newProduct.image] : []
+      images: imageUrl ? [imageUrl] : []
     });
 
     setNewProduct({
       name: "",
       price: "",
       description: "",
-      image: ""
+      imageFile: null
     });
 
-    loadProducts(); // reload
+    loadProducts();
   };
 
   return (
     <div style={styles.page}>
 
-      {/* HEADER */}
       <div style={styles.header}>
-        <img src="/logo.png" style={styles.logo} />
-
-        <div>
-          <h1 style={styles.title}>
-            VibeFree – Diskreter Online Shop
-          </h1>
-          <p style={styles.sub}>
-            Premium • Versand DE & CH • Schnell & sicher
-          </p>
-        </div>
+        <h1>VibeFree Shop</h1>
       </div>
 
-      {/* 👉 ADMIN PANEL */}
+      {/* ➕ PRODUKT HINZUFÜGEN */}
       <div style={styles.adminBox}>
-        <h3>Admin – Neues Produkt</h3>
+        <h3>Neues Produkt erstellen</h3>
 
         <input
           placeholder="Name"
@@ -88,14 +88,6 @@ export default function App() {
           }
         />
 
-        <input
-          placeholder="Bild URL"
-          value={newProduct.image}
-          onChange={(e) =>
-            setNewProduct({ ...newProduct, image: e.target.value })
-          }
-        />
-
         <textarea
           placeholder="Beschreibung"
           value={newProduct.description}
@@ -104,12 +96,20 @@ export default function App() {
           }
         />
 
+        {/* 📸 IMAGE UPLOAD */}
+        <input
+          type="file"
+          onChange={(e) =>
+            setNewProduct({ ...newProduct, imageFile: e.target.files[0] })
+          }
+        />
+
         <button onClick={addProduct} style={styles.button}>
-          + Produkt erstellen
+          Produkt speichern
         </button>
       </div>
 
-      {/* PRODUKTE */}
+      {/* 📦 PRODUKTE */}
       <div style={styles.grid}>
         {products.map(p => (
           <div key={p.id} style={styles.card}>
@@ -133,30 +133,14 @@ export default function App() {
 const styles = {
   page: {
     minHeight: "100vh",
-    background: "radial-gradient(circle,#0f172a,#020617)",
+    background: "#0f172a",
     color: "white",
     fontFamily: "Arial",
     padding: 20
   },
 
   header: {
-    display: "flex",
-    gap: 15,
     marginBottom: 20
-  },
-
-  logo: {
-    width: 90,
-    height: 90,
-    borderRadius: 10
-  },
-
-  title: {
-    fontSize: 24
-  },
-
-  sub: {
-    opacity: 0.7
   },
 
   adminBox: {
@@ -205,4 +189,5 @@ const styles = {
     justifyContent: "center",
     background: "#1e293b"
   }
+};}
 };
