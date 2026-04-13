@@ -16,7 +16,6 @@ export default function App() {
         ...doc.data()
       }));
 
-      // 👉 Wenn keine Produkte da sind → 4 erstellen
       if (items.length === 0) {
         const defaults = [
           { name: "Produkt 1", price: "", description: "", images: [] },
@@ -32,7 +31,6 @@ export default function App() {
         return loadProducts();
       }
 
-      // 👉 immer nur 4 anzeigen
       setProducts(items.slice(0, 4));
 
     } catch (err) {
@@ -77,10 +75,32 @@ export default function App() {
         ))}
       </div>
 
+      {/* VERTRAUENSTEXT */}
+      <div style={styles.trust}>
+        <p>
+          ✔ Kostenloser Versand innerhalb Deutschland & Schweiz (3 Tage)<br/>
+          ✔ Diskrete Verpackung & sicherer Versand<br/>
+          ✔ Direkter Kontakt & Bestellung über WhatsApp<br/>
+          ✔ Persönlicher Support bei Fragen<br/>
+          ✔ 100% zuverlässige Lieferung garantiert
+        </p>
+      </div>
+
+      {/* WHY BOX */}
+      <div style={styles.trustBox}>
+        <h3>Warum VibeFree?</h3>
+        <ul>
+          <li>✔ Schnelle Lieferung (ca. 3 Tage)</li>
+          <li>✔ Diskret & anonym verpackt</li>
+          <li>✔ Kein Risiko – erst Kontakt, dann Bestellung</li>
+          <li>✔ Direkt & unkompliziert</li>
+        </ul>
+      </div>
+
       {/* FOOTER */}
       <div style={styles.footer}>
-✔ Kostenloser Versand innerhalb Deutschland & Schweiz  
-✔ Lieferzeit: ca. 3 Werktage      </div>
+        Kostenloser Versand innerhalb Deutschland & Schweiz • Lieferzeit ca. 3 Werktage
+      </div>
 
     </div>
   );
@@ -155,9 +175,29 @@ const styles = {
     opacity: 0.7
   },
 
+  trust: {
+    marginTop: 40,
+    textAlign: "center",
+    fontSize: 14,
+    lineHeight: 1.6,
+    opacity: 0.85
+  },
+
+  trustBox: {
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(255,255,255,0.1)",
+    padding: 20,
+    borderRadius: 12,
+    marginTop: 20,
+    maxWidth: 500,
+    marginLeft: "auto",
+    marginRight: "auto"
+  },
+
   footer: {
     marginTop: 40,
     textAlign: "center",
-    opacity: 0.6
+    opacity: 0.5,
+    fontSize: 13
   }
 };
