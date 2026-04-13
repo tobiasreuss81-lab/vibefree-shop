@@ -16,6 +16,7 @@ export default function App() {
         ...doc.data()
       }));
 
+      // 👉 falls keine Produkte vorhanden → 4 Standardprodukte erstellen
       if (items.length === 0) {
         const defaults = [
           { name: "Produkt 1", price: "", description: "", images: [] },
@@ -50,9 +51,22 @@ export default function App() {
         <img src="/logo.png" style={styles.logo} />
 
         <div>
-          <h1 style={styles.title}>VibeFree Erotic Products</h1>
-          <p style={styles.sub}>Premium • Diskret • Hochwertig</p>
+          <h1 style={styles.title}>
+            VibeFree – Diskreter Online Shop für Lifestyle Produkte
+          </h1>
+          <p style={styles.sub}>
+            Premium Produkte • Diskreter Versand Deutschland & Schweiz • Schnell & sicher bestellen
+          </p>
         </div>
+      </div>
+
+      {/* SEO TEXT BLOCK */}
+      <div style={styles.seoText}>
+        <p>
+          VibeFree ist ein diskreter Online Shop für Lifestyle Produkte mit sicherem Versand
+          innerhalb von Deutschland und der Schweiz. Alle Bestellungen werden anonym und diskret
+          verpackt und schnell geliefert.
+        </p>
       </div>
 
       {/* PRODUKTE */}
@@ -75,14 +89,14 @@ export default function App() {
         ))}
       </div>
 
-      {/* VERTRAUENSTEXT */}
+      {/* VERTRAUEN */}
       <div style={styles.trust}>
         <p>
           ✔ Kostenloser Versand innerhalb Deutschland & Schweiz (3 Tage)<br/>
-          ✔ Diskrete Verpackung & sicherer Versand<br/>
-          ✔ Direkter Kontakt & Bestellung über WhatsApp<br/>
-          ✔ Persönlicher Support bei Fragen<br/>
-          ✔ 100% zuverlässige Lieferung garantiert
+          ✔ Diskrete & anonyme Verpackung<br/>
+          ✔ Premium Lifestyle Produkte online bestellen<br/>
+          ✔ Schnelle Lieferung & sicherer Kontakt über WhatsApp<br/>
+          ✔ 100% zuverlässige Abwicklung
         </p>
       </div>
 
@@ -90,14 +104,14 @@ export default function App() {
       <div style={styles.trustBox}>
         <h3>Warum VibeFree?</h3>
         <ul>
-          <li>✔ Schnelle Lieferung (ca. 3 Tage)</li>
-          <li>✔ Diskret & anonym verpackt</li>
-          <li>✔ Kein Risiko – erst Kontakt, dann Bestellung</li>
-          <li>✔ Direkt & unkompliziert</li>
+          <li>✔ Diskreter Online Shop</li>
+          <li>✔ Schneller Versand Deutschland & Schweiz</li>
+          <li>✔ Einfache Bestellung über WhatsApp</li>
+          <li>✔ Keine komplizierten Prozesse</li>
         </ul>
       </div>
 
-      {/* FOOTER (JETZT MIT KONTAKT) */}
+      {/* FOOTER */}
       <div style={styles.footer}>
         Kontakt: vibe-free@gmx.de
       </div>
@@ -106,7 +120,7 @@ export default function App() {
   );
 }
 
-/* DESIGN */
+/* STYLES */
 
 const styles = {
   page: {
@@ -133,11 +147,18 @@ const styles = {
 
   title: {
     margin: 0,
-    fontSize: 32
+    fontSize: 30
   },
 
   sub: {
-    opacity: 0.6
+    opacity: 0.7
+  },
+
+  seoText: {
+    fontSize: 14,
+    opacity: 0.85,
+    marginBottom: 20,
+    lineHeight: 1.5
   },
 
   grid: {
@@ -180,7 +201,7 @@ const styles = {
     textAlign: "center",
     fontSize: 14,
     lineHeight: 1.6,
-    opacity: 0.85
+    opacity: 0.9
   },
 
   trustBox: {
